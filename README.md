@@ -55,6 +55,8 @@ stm32f10x.h为底层文件，包含寄存器地址和结构体定义，用固件
 
 stm32f10x_it.c/h为写入中断服务函数，函数接口自行在启动文件中查询，写入中断时要打开对NVIC（中断向量控制器）的访问函数
 
+stm32f10x_conf.h被包含在stm32f10x.h中，是用于配置使用了什么外设的头文件
+
 ## 二.GPIO的基本控制用法
 
 以几个GPIO操作为例，介绍GPIO一些基本函数
@@ -70,7 +72,7 @@ void LED_Init(void)
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	
 	GPIO_Init(GPIOA, &GPIO_InitStructure);	
   	GPIO_SetBits(GPIOLED, GPIO_Pin_LED);
-}//只是一个启动函数，其余模块化编程自行完成，或参考文件： 20210120_操作GPIO点灯
+}//只是一个初始化自定义函数，其余模块化编程自行完成，参考文件： 20210120_操作GPIO点灯
 ```
 
 ### GPIO_Init
@@ -118,7 +120,60 @@ STM32固件库使用手册的中文翻译版 中page124面
 用于控制IO口输出高低电平
 
 ```c
-//案例二：用按键key（PC13）控制灯的亮灭
+//案例二：用按键key（PC13）控制灯的亮灭,按下按键时灯熄灭，平时亮
+ int main(void)
+{	
+	 char i;
+   LED_Init();
+	 delay_init();
+	 KEY_Init();
+  
+ 				//PA.5 输出高  
+	while(1)
+	{
+	  i = GPIO_ReadInputDataBit(GPIOKEY , GPIO_Pin_KEY);
+		if(i==i)
+			GPIO_SetBits(GPIOLED , GPIO_Pin_LED);
+		else if(i==0)
+			GPIO_ResetBits(GPIOLED , GPIO_Pin_LED);
+	}
+}
+//main函数
+#include "key.h"
+void KEY_Init(void)
+{
 
+
+	GPIO_InitTypeDef GPIO_InitStructure;
+  RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOKEY, ENABLE);
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_KEY;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPU;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;	
+
+	GPIO_Init(GPIOA, &GPIO_InitStructure);	
+  GPIO_SetBits(GPIOKEY, GPIO_Pin_KEY);
+
+}
+//key初始化，设为上拉输入模式，按键按下视为输入低电平，详细程序见 20210122_GPIO读取输入
+//未写入消抖过程，多专注代码主要实现方向，后续可自行加入。
 ```
 
+### GPIO_Read Input/Output DataBit
+
+**STM32固件库使用手册的中文翻译版** 中page127面
+
+用于读取指定端口管脚的输入/输出，当GPIO为输入/输出模式时候使用
+
+------
+
+### GPIO_Read Input/Output Data
+
+**STM32固件库使用手册的中文翻译版** 中page127面
+
+读取指定的 GPIO 端口输入/输出
+
+
+
+GPIO库中主要库函数基本如上，全部函数如下，不懂用法自行百度或查询STM32固件库使用手册
+
+![image-20210122190854871](C:\Users\卢思远\AppData\Roaming\Typora\typora-user-images\image-20210122190854871.png)
