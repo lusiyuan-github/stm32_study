@@ -113,7 +113,7 @@ STM32固件库使用手册的中文翻译版 中page124面
 
 ------
 
-### GPIO_SetBits\GPIO_ResetBits
+### GPIO_SetBits/GPIO_ResetBits
 
 **STM32固件库使用手册的中文翻译版** 中page128面
 
@@ -172,8 +172,11 @@ void KEY_Init(void)
 
 读取指定的 GPIO 端口输入/输出
 
+------
+
+GPIO库中主要库函数基本如上，其余函数不懂用法自行百度或查询STM32固件库使用手册
 
 
-GPIO库中主要库函数基本如上，全部函数如下，不懂用法自行百度或查询STM32固件库使用手册
 
-![image-20210122190854871](C:\Users\卢思远\AppData\Roaming\Typora\typora-user-images\image-20210122190854871.png)
+## 三.EXTI中断的基本用法
+
